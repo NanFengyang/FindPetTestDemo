@@ -11,6 +11,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.ScaleAnimation;
+import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
@@ -30,7 +34,7 @@ import tyrantgit.widget.HeartLayout;
 /**
  * Created by xmuSistone on 2016/9/19.
  */
-public class DetailActivity extends FragmentActivity {
+public class DetailActivity extends FragmentActivity implements View.OnClickListener {
 
     public static final String EXTRA_IMAGE_URL = "detailImageUrl";
 
@@ -73,7 +77,7 @@ public class DetailActivity extends FragmentActivity {
         address5 = findViewById(R.id.address5);
         ratingBar = (RatingBar) findViewById(R.id.rating);
         listContainer = (LinearLayout) findViewById(R.id.detail_list_container);
-
+        findViewById(R.id.animview).setOnClickListener(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Window window = getWindow();
             window.setFlags(
@@ -162,7 +166,7 @@ public class DetailActivity extends FragmentActivity {
         for (int i = 0; i < 20; i++) {
             View childView = layoutInflater.inflate(R.layout.detail_list_item, null);
             listContainer.addView(childView);
-            ImageView headView = (ImageView) childView.findViewById(R.id.head);
+            final ImageView headView = (ImageView) childView.findViewById(R.id.head);
             final HeartLayout mHeartLayout = (HeartLayout) childView.findViewById(R.id.heart_layout);
             mHeartLayout.setTag(i);
             mHeartLayout.setOnClickListener(new View.OnClickListener() {
@@ -181,10 +185,59 @@ public class DetailActivity extends FragmentActivity {
 
                 }
             });
+
             if (i < headStrs.length) {
                 headView.setImageResource(imageIds[i % imageIds.length]);
                 ViewCompat.setTransitionName(headView, headStrs[i]);
             }
         }
+    }
+
+    /**
+     * 放大动画
+     *
+     * @param view
+     */
+    public void scaleAnim(View view) {
+        Animation scaleAnimation = new ScaleAnimation(1f, 2.0f, 1f, 2f);
+        scaleAnimation.setDuration(2000);
+        scaleAnimation.setFillAfter(true);
+        view.startAnimation(scaleAnimation);
+    }
+
+    /**
+     * 位移动画
+     *
+     * @param view
+     */
+    public void transAnim(View view) {
+        Animation scaleAnimation = new TranslateAnimation(0.1f, ScreenUtil.getScreenWidth(this) / 2 - view.getWidth() / 2 - view.getLeft(), 0.1f, 0.1f);
+        scaleAnimation.setDuration(2000);
+        scaleAnimation.setFillAfter(true);
+        view.startAnimation(scaleAnimation);
+    }
+
+    /**
+     * 放大加位移动画
+     *
+     * @param view
+     */
+    public void scaleAndtransAnim(View view) {
+        Animation scaleAnimation = new ScaleAnimation(1f, 2.0f, 1f, 2f);
+
+        Animation transAnimation = new TranslateAnimation(0f, ScreenUtil.getScreenWidth(this) / 2 - view.getWidth() / 2 - view.getLeft(), 0f, 0f);
+
+        AnimationSet set = new AnimationSet(true);
+        set.addAnimation(scaleAnimation);
+        set.addAnimation(transAnimation);
+        set.setDuration(3000);
+        set.setFillAfter(true);
+
+        view.startAnimation(set);
+    }
+
+    @Override
+    public void onClick(View v) {
+        scaleAndtransAnim(v);
     }
 }

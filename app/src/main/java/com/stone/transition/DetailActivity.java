@@ -24,6 +24,7 @@ import com.gitonway.lee.niftynotification.lib.Configuration;
 import com.gitonway.lee.niftynotification.lib.Effects;
 import com.gitonway.lee.niftynotification.lib.NiftyNotificationView;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.stone.transition.photoview.PhotoView;
 
 import net.steamcrafted.loadtoast.LoadToast;
 
@@ -52,9 +53,9 @@ public class DetailActivity extends FragmentActivity implements View.OnClickList
     public static final String HEAD4_TRANSITION_NAME = "head4";
 
     private View address1, address2, address3, address4, address5;
-    private ImageView imageView;
+    private PhotoView image, imageBig;
     private RatingBar ratingBar;
-
+    private ImageView imageView;
     private LinearLayout listContainer;
     private static final String[] headStrs = {HEAD1_TRANSITION_NAME, HEAD2_TRANSITION_NAME, HEAD3_TRANSITION_NAME, HEAD4_TRANSITION_NAME};
     private static final int[] imageIds = {R.drawable.head1, R.drawable.head2, R.drawable.head3, R.drawable.head4};
@@ -70,6 +71,29 @@ public class DetailActivity extends FragmentActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         imageView = (ImageView) findViewById(R.id.image);
+        image = (PhotoView) findViewById(R.id.animview);
+        imageBig = (PhotoView) findViewById(R.id.imagebig);
+        image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(DetailActivity.this, "点击", Toast.LENGTH_SHORT).show();
+                imageBig.setImageResource(R.drawable.head3);
+                imageBig.animaFrom(image.getInfo());
+                imageBig.setVisibility(View.VISIBLE);
+
+            }
+        });
+        imageBig.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imageBig.animaTo(image.getInfo(), new Runnable() {
+                    @Override
+                    public void run() {
+                        imageBig.setVisibility(View.GONE);
+                    }
+                });
+            }
+        });
         address1 = findViewById(R.id.address1);
         address2 = findViewById(R.id.address2);
         address3 = findViewById(R.id.address3);
@@ -77,7 +101,6 @@ public class DetailActivity extends FragmentActivity implements View.OnClickList
         address5 = findViewById(R.id.address5);
         ratingBar = (RatingBar) findViewById(R.id.rating);
         listContainer = (LinearLayout) findViewById(R.id.detail_list_container);
-        findViewById(R.id.animview).setOnClickListener(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Window window = getWindow();
             window.setFlags(
